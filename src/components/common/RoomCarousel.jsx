@@ -1,0 +1,79 @@
+import React, { useEffect, useState } from 'react'
+import { getAllRooms } from '../utils/ApiFunctions'
+import { Link } from 'react-router-dom'
+import { Carousel, Card, Col, Row, Container } from 'react-bootstrap'
+
+const RoomCarousel = () => {
+  const [rooms, setRooms] = useState([])
+  const [errorMessage, setErrorMessage] = useState("")
+  const [isLoading, setIsLoading] = useState(false)
+
+  useEffect(() => {
+    setIsLoading(true)
+    getAllRooms()
+      .then((data) => {
+        setRooms(data)
+        setIsLoading(false)
+      })
+      .catch((error) => {
+        setErrorMessage(error.message)
+        setIsLoading(false)
+      })
+  }, [])
+
+  if (isLoading) {
+    return <div className='text-danger mb-5 mt-5'>Loading rooms...</div>
+  }
+
+  if (errorMessage) {
+    return <div className='text-danger mb mt-5'>Error: {errorMessage}</div>
+  }
+
+  return (
+    <section className='bg-light mb-5 mt-5 shadow'>
+      <Link to={"/browse-all-rooms"} className="hotel-color text-center">
+        Browse all rooms
+      </Link>
+      <Container>
+        <Carousel indicators={false}>
+          {[...Array(Math.ceil(rooms.length / 4))].map((_, index) => (
+            <Carousel.Item key={index}>
+              <Row>
+                {rooms.slice(index * 4, index * 4 + 4).map((room) => (
+                  <Col key={room.id} className='mb-4' xs={12} md={6} lg={3}>
+                    <Card>
+                      {/* 🟢 Image cliquable qui envoie le roomId via state */}
+                      <Link to={`/booking/${room.id}`}>
+                        <Card.Img
+                          variant="top"
+                          src={`data:image/png;base64, ${room.photo}`}
+                          alt="Room Photo"
+                          className="w-100"
+                          style={{ height: "200px" }}
+                        />
+                      </Link>
+
+                      <Card.Body>
+                        <Card.Title className="hotel-color">{room.roomType}</Card.Title>
+                        <Card.Title className="room-price">{room.roomPrice} DH / night</Card.Title>
+
+                        {/* 🟢 Bouton Book Now qui passe aussi le roomId */}
+                        <div className='flex-shrink-0'>
+                          <Link className='btn btn-sm btn-hotel' to={`/booking/${room.id}`}>
+                            Book Now
+                          </Link>
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  </Col>
+                ))}
+              </Row>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      </Container>
+    </section>
+  )
+}
+
+export default RoomCarousel
