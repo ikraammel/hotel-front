@@ -1,7 +1,7 @@
 import React from 'react'
 
 const RoomPaginator = ({currentPage,totalPages,onPageChange}) => {
-    const pageNumbers = Array.from({length : totalPages},(_,i) => i)
+    const pageNumbers = Array.from({length : totalPages},(_,i) => i+1)
   return (
     <nav>
       <ul className='pagination justify-content-center'>
@@ -9,7 +9,7 @@ const RoomPaginator = ({currentPage,totalPages,onPageChange}) => {
             <li key={pageNumber}
             className={`page-item ${currentPage == pageNumber ? "active" : ""}`}>
                 <button className='page-link' onClick={() => onPageChange(pageNumber)}>
-                                {pageNumber + 1}
+                                {pageNumber}
                 </button>
             </li>)}
       </ul>
