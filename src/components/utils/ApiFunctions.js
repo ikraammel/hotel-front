@@ -1,9 +1,14 @@
 import axios from "axios";
 
+const isLocalhost = window.location.hostname === "localhost";
+
 export const api = axios.create({
-  baseURL: "http://localhost:8080",
-  withCredentials: true 
+  baseURL: isLocalhost
+    ? "http://localhost:8080"
+    : "https://ikrams-hotel.onrender.com",
+  withCredentials: true
 });
+
 
 export const getHeader = () => {
   const token = localStorage.getItem("token");
